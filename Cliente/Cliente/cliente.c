@@ -53,7 +53,7 @@ int main(int *argc, char *argv[])
 	}
 	//Fin: Inicialización Windows sockets
 
-	do{
+	do{ //Aquí está es socket
 		sockfd=socket(AF_INET,SOCK_STREAM,0);
 
 		if(sockfd==INVALID_SOCKET)
@@ -171,7 +171,7 @@ int main(int *argc, char *argv[])
 				printf("CLIENTE> ERROR AL CONECTAR CON %s:%d\r\n",ipdest,TCP_SERVICE_PORT);
 			}		
 			// fin de la conexion de transporte
-			closesocket(sockfd);
+			closesocket(sockfd);  //Primitiva CLOSE
 			
 		}	
 		printf("-----------------------\r\n\r\nCLIENTE> Volver a conectar (S/N)\r\n");
