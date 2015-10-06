@@ -50,7 +50,7 @@ main()
 	/** FIN INICIALIZACION DE BIBLIOTECA WINSOCK2 **/
 
 
-	sockfd=socket(AF_INET,SOCK_STREAM,0);//Creación del socket
+	sockfd=socket(AF_INET,SOCK_STREAM,0);//Creación del socket- Crea un descriptor socket
 
 	if(sockfd==INVALID_SOCKET)	{
 		return(-3);
@@ -63,11 +63,11 @@ main()
 	}
 	
 	// Enlace el socket a la direccion local (IP y puerto)
-	if(bind(sockfd,(struct sockaddr*)&local_addr,sizeof(local_addr))<0)
+	if(bind(sockfd,(struct sockaddr*)&local_addr,sizeof(local_addr))<0) //Bind-Asocia una dirección local con un socket
 		return(-4);
 	
 	//Se prepara el socket para recibir conexiones y se establece el tamaño de cola de espera
-	if(listen(sockfd,5)!=0)
+	if(listen(sockfd,5)!=0) //Listen- crea una cola de espera para almacenar solicitudes de conexión
 		return (-6);
 	
 	tamanio=sizeof(remote_addr);
@@ -76,7 +76,7 @@ main()
 	{
 		printf ("SERVIDOR> ESPERANDO NUEVA CONEXION DE TRANSPORTE\r\n");
 		
-		nuevosockfd=accept(sockfd,(struct sockaddr*)&remote_addr,&tamanio);
+		nuevosockfd=accept(sockfd,(struct sockaddr*)&remote_addr,&tamanio); //Accept- Espera una solicitud de conexión
 
 		if(nuevosockfd==INVALID_SOCKET) {
 			
@@ -89,7 +89,7 @@ main()
 		//Mensaje de Bienvenida
 		sprintf_s (buffer_out, sizeof(buffer_out), "%s Bienvenindo al servidor de ECO%s",OK,CRLF);
 		
-		enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0);
+		enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0);//Send- envía un mensaje
 		//TODO Comprobar error de envío
  
 		//Se reestablece el estado inicial
@@ -100,7 +100,7 @@ main()
 		do
 		{
 			//Se espera un comando del cliente
-			recibidos = recv(nuevosockfd,buffer_in,1023,0);
+			recibidos = recv(nuevosockfd,buffer_in,1023,0); //Recv- Recibir un mensaje
 			//TODO Comprobar posible error de recepción
 			
 			buffer_in[recibidos] = 0x00;
@@ -112,7 +112,7 @@ main()
 					strncpy_s ( cmd, sizeof(cmd),buffer_in, 4);
 					cmd[4]=0x00; // en C los arrays finalizan con el byte 0000 0000
 
-					if ( strcmp(cmd,SC)==0 ) // si recibido es solicitud de conexion de aplicacion
+					if ( strcmp(cmd,SC)==0 ) // si recibido es solicitud de conexion de aplicacion     // SOLICITUD DE CONEXION USER usuario
 					{
 						sscanf_s (buffer_in,"USER %s\r\n",usr,sizeof(usr));
 						
@@ -122,7 +122,7 @@ main()
 						estado = S_PASS;
 						printf ("SERVIDOR> Esperando clave\r\n");
 					} else
-					if ( strcmp(cmd,SD)==0 )
+					if ( strcmp(cmd,SD)==0 )// Finalizacion de la conexion de aplicacion
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
 						fin_conexion=1;
@@ -139,7 +139,7 @@ main()
 					strncpy_s ( cmd, sizeof(cmd), buffer_in, 4);
 					cmd[4]=0x00; // en C los arrays finalizan con el byte 0000 0000
 
-					if ( strcmp(cmd,PW)==0 ) // si comando recibido es password
+					if ( strcmp(cmd,PW)==0 ) // si comando recibido es password     // Password del usuario  PASS password
 					{
 						sscanf_s (buffer_in,"PASS %s\r\n",pas,sizeof(usr));
 
@@ -156,7 +156,7 @@ main()
 							sprintf_s (buffer_out, sizeof(buffer_out), "%s Autenticación errónea%s",ER,CRLF);
 						}
 					} else
-					if ( strcmp(cmd,SD)==0 )
+					if ( strcmp(cmd,SD)==0 )// Finalizacion de la conexion de aplicacion
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
 						fin_conexion=1;
@@ -175,12 +175,12 @@ main()
 
 					printf ("SERVIDOR [Comando]>%s\r\n",cmd);
 					
-					if ( strcmp(cmd,SD)==0 )
+					if ( strcmp(cmd,SD)==0 )// Finalizacion de la conexion de aplicacion
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
 						fin_conexion=1;
 					}
-					else if (strcmp(cmd,SD2)==0)
+					else if (strcmp(cmd,SD2)==0) // Finalizacion de la conexion de aplicacion y finaliza servidor
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Finalizando servidor%s", OK,CRLF);
 						fin_conexion=1;
@@ -197,14 +197,14 @@ main()
 					
 			} // switch
 
-			enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0);
+			enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0);//Send- Enviar un mensaje
 			//TODO 
 
 
 		} while (!fin_conexion);
 		printf ("SERVIDOR> CERRANDO CONEXION DE TRANSPORTE\r\n");
-		shutdown(nuevosockfd,SD_SEND);
-		closesocket(nuevosockfd);
+		shutdown(nuevosockfd,SD_SEND); //Shutdown- Deshabilita la recepción y/o el envío de datos por el socket
+		closesocket(nuevosockfd); //Close- cierra socket
 
 	}while(!fin);
 

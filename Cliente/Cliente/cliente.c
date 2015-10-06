@@ -53,8 +53,8 @@ int main(int *argc, char *argv[])
 	}
 	//Fin: Inicialización Windows sockets
 
-	do{ //Aquí está es socket
-		sockfd=socket(AF_INET,SOCK_STREAM,0);
+	do{ 
+		sockfd=socket(AF_INET,SOCK_STREAM,0);//Aquí está es socket- Crea un descriptor socket
 
 		if(sockfd==INVALID_SOCKET)
 		{
@@ -79,8 +79,8 @@ int main(int *argc, char *argv[])
 			
 			estado=S_HELO;
 		
-			// establece la conexion de transporte
-			if(connect(sockfd,(struct sockaddr*)&server_in,sizeof(server_in))==0)
+			// establece la conexion de transporte-
+			if(connect(sockfd,(struct sockaddr*)&server_in,sizeof(server_in))==0) //Connect-Inicia conexión con conector remoto
 			{
 				printf("CLIENTE> CONEXION ESTABLECIDA CON %s:%d\r\n",ipdest,TCP_SERVICE_PORT);
 			
@@ -98,30 +98,30 @@ int main(int *argc, char *argv[])
 						gets(input);
 						if(strlen(input)==0)
 						{
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);// Finalizacion de la conexion de aplicacion
 							estado=S_QUIT;
 						}
 						else
 
-						sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",SC,input,CRLF);
+						sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",SC,input,CRLF); // SOLICITUD DE CONEXION USER usuario 
 						break;
 					case S_PASS:
 						printf("CLIENTE> Introduzca la clave (enter para salir): ");
 						gets(input);
 						if(strlen(input)==0)
 						{
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);// Finalizacion de la conexion de aplicacion
 							estado=S_QUIT;
 						}
 						else
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",PW,input,CRLF);
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",PW,input,CRLF); // Password del usuario  PASS password
 						break;
 					case S_DATA:
 						printf("CLIENTE> Introduzca datos (enter o QUIT para salir): ");
 						gets(input);
 						if(strlen(input)==0)
 						{
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);// Finalizacion de la conexion de aplicacion
 							estado=S_QUIT;
 						}
 						else
@@ -133,10 +133,10 @@ int main(int *argc, char *argv[])
 					//Envio
 					if(estado!=S_HELO)
 					// Ejercicio: Comprobar el estado de envio
-						enviados=send(sockfd,buffer_out,(int)strlen(buffer_out),0);
+						enviados=send(sockfd,buffer_out,(int)strlen(buffer_out),0); //Send- envía un mensaje
 
 					//Recibo
-					recibidos=recv(sockfd,buffer_in,512,0);
+					recibidos=recv(sockfd,buffer_in,512,0); //Recv- Recibir un mensaje
 
 					if(recibidos<=0)
 					{
@@ -171,7 +171,7 @@ int main(int *argc, char *argv[])
 				printf("CLIENTE> ERROR AL CONECTAR CON %s:%d\r\n",ipdest,TCP_SERVICE_PORT);
 			}		
 			// fin de la conexion de transporte
-			closesocket(sockfd);  //Primitiva CLOSE
+			closesocket(sockfd);  //Close- cierra socket
 			
 		}	
 		printf("-----------------------\r\n\r\nCLIENTE> Volver a conectar (S/N)\r\n");
