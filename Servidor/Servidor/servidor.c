@@ -50,7 +50,7 @@ main()
 	/** FIN INICIALIZACION DE BIBLIOTECA WINSOCK2 **/
 
 
-	sockfd=socket(AF_INET,SOCK_STREAM,0);//Creación del socket- Crea un descriptor socket
+	sockfd=socket(AF_INET,SOCK_STREAM,0); //Creación del socket- Crea un descriptor socket
 
 	if(sockfd==INVALID_SOCKET)	{
 		return(-3);
@@ -74,7 +74,8 @@ main()
 
 	do
 	{
-		printf ("SERVIDOR> ESPERANDO NUEVA CONEXION DE TRANSPORTE\r\n");
+		printf ("SERVIDOR> ESPERANDO NUEVA CONEXION DE TRANSPORTE\r\n"); //Llegamos aquí si se ha creado bien la conexión 
+		//con el cliente.
 		
 		nuevosockfd=accept(sockfd,(struct sockaddr*)&remote_addr,&tamanio); //Accept- Espera una solicitud de conexión
 
@@ -89,7 +90,7 @@ main()
 		//Mensaje de Bienvenida
 		sprintf_s (buffer_out, sizeof(buffer_out), "%s Bienvenindo al servidor de ECO%s",OK,CRLF);
 		
-		enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0);//Send- envía un mensaje
+		enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0); //Send- envía un mensaje
 		//TODO Comprobar error de envío
  
 		//Se reestablece el estado inicial
@@ -110,9 +111,9 @@ main()
 			{
 				case S_USER:    /*****************************************/
 					strncpy_s ( cmd, sizeof(cmd),buffer_in, 4);
-					cmd[4]=0x00; // en C los arrays finalizan con el byte 0000 0000
+					cmd[4]=0x00; //En C los arrays finalizan con el byte 0000 0000
 
-					if ( strcmp(cmd,SC)==0 ) // si recibido es solicitud de conexion de aplicacion     // SOLICITUD DE CONEXION USER usuario
+					if ( strcmp(cmd,SC)==0 ) //Si el comando recibido es solicitud de conexion de aplicación.
 					{
 						sscanf_s (buffer_in,"USER %s\r\n",usr,sizeof(usr));
 						
@@ -122,7 +123,7 @@ main()
 						estado = S_PASS;
 						printf ("SERVIDOR> Esperando clave\r\n");
 					} else
-					if ( strcmp(cmd,SD)==0 )// Finalizacion de la conexion de aplicacion
+					if ( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicación.
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
 						fin_conexion=1;
@@ -137,16 +138,16 @@ main()
 
 					
 					strncpy_s ( cmd, sizeof(cmd), buffer_in, 4);
-					cmd[4]=0x00; // en C los arrays finalizan con el byte 0000 0000
+					cmd[4]=0x00; //En C los arrays finalizan con el byte 0000 0000
 
-					if ( strcmp(cmd,PW)==0 ) // si comando recibido es password     // Password del usuario  PASS password
+					if ( strcmp(cmd,PW)==0 ) //Si el comando recibido es password:
 					{
 						sscanf_s (buffer_in,"PASS %s\r\n",pas,sizeof(usr));
 
-						if ( (strcmp(usr,USER)==0) && (strcmp(pas,PASSWORD)==0) ) // si password recibido es correcto
+						if ( (strcmp(usr,USER)==0) && (strcmp(pas,PASSWORD)==0) ) //Si el usuario y la clave recibidos son correctos
 						{
-							// envia aceptacion de la conexion de aplicacion, nombre de usuario y
-							// la direccion IP desde donde se ha conectado
+							//envía aceptación de la conexión de aplicación, nombre de usuario y
+							//la direccion IP desde donde se ha conectado.
 							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s IP(%s)%s", OK, usr, inet_ntoa(remote_addr.sin_addr),CRLF);
 							estado = S_DATA;
 							printf ("SERVIDOR> Esperando comando\r\n");
@@ -156,7 +157,7 @@ main()
 							sprintf_s (buffer_out, sizeof(buffer_out), "%s Autenticación errónea%s",ER,CRLF);
 						}
 					} else
-					if ( strcmp(cmd,SD)==0 )// Finalizacion de la conexion de aplicacion
+					if ( strcmp(cmd,SD)==0 ) //Finalización de la conexión de aplicación.
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
 						fin_conexion=1;
@@ -175,12 +176,12 @@ main()
 
 					printf ("SERVIDOR [Comando]>%s\r\n",cmd);
 					
-					if ( strcmp(cmd,SD)==0 )// Finalizacion de la conexion de aplicacion
+					if ( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicacion
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
 						fin_conexion=1;
 					}
-					else if (strcmp(cmd,SD2)==0) // Finalizacion de la conexion de aplicacion y finaliza servidor
+					else if (strcmp(cmd,SD2)==0) //Finalizacion de la conexion de aplicacion y finaliza servidor
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Finalizando servidor%s", OK,CRLF);
 						fin_conexion=1;
@@ -197,7 +198,7 @@ main()
 					
 			} // switch
 
-			enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0);//Send- Enviar un mensaje
+			enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0); //Send- Enviar un mensaje
 			//TODO 
 
 
