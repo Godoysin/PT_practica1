@@ -54,7 +54,7 @@ int main(int *argc, char *argv[])
 	//Fin: Inicialización Windows sockets
 
 	do{ 
-		sockfd=socket(AF_INET,SOCK_STREAM,0);//Aquí está es socket- Crea un descriptor socket
+		sockfd=socket(AF_INET,SOCK_STREAM,0); //socket- Crea un descriptor socket
 
 		if(sockfd==INVALID_SOCKET)
 		{
@@ -69,7 +69,7 @@ int main(int *argc, char *argv[])
 			printf("CLIENTE> Introduzca la IP destino (pulsar enter para IP por defecto): ");
 			gets(ipdest);
 
-			if(strcmp(ipdest,"")==0)
+			if(strcmp(ipdest,"")==0) //Si no introduces una IP, coge una por defecto
 				strcpy(ipdest,default_ip);
 
 
@@ -79,53 +79,60 @@ int main(int *argc, char *argv[])
 			
 			estado=S_HELO;
 		
-			// establece la conexion de transporte-
-			if(connect(sockfd,(struct sockaddr*)&server_in,sizeof(server_in))==0) //Connect-Inicia conexión con conector remoto
+			//Establece la conexion de transporte.
+			if(connect(sockfd,(struct sockaddr*)&server_in,sizeof(server_in))==0) //Connect- Inicia conexión con conector remoto
+			//Si se conecta, te dice que se ha establecido conexión, si no, no.
 			{
 				printf("CLIENTE> CONEXION ESTABLECIDA CON %s:%d\r\n",ipdest,TCP_SERVICE_PORT);
 			
 		
-				//Inicio de la máquina de estados
+				//Inicio de la máquina de estados.
 				do{
 					switch(estado)
 					{
 					case S_HELO:
-						// Se recibe el mensaje de bienvenida
+						//Se recibe el mensaje de bienvenida.
 						break;
 					case S_USER:
-						// establece la conexion de aplicacion 
+						//Establece la conexion de aplicacion 
 						printf("CLIENTE> Introduzca el usuario (enter para salir): ");
 						gets(input);
-						if(strlen(input)==0)
+						if(strlen(input)==0) //Si la longitud de la cadena de caracteres es cero:
 						{
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);// Finalizacion de la conexion de aplicacion
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF); //Finaliza la conexion de manera de que
+							//el servidor espere una nueva conexión.
 							estado=S_QUIT;
 						}
 						else
 
-						sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",SC,input,CRLF); // SOLICITUD DE CONEXION USER usuario 
+						sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",SC,input,CRLF); //Como si se ha introducido un usuario
+						//supone que es correcto y pasa a introducir la clave. (Envía el usuario con input).
 						break;
 					case S_PASS:
 						printf("CLIENTE> Introduzca la clave (enter para salir): ");
 						gets(input);
-						if(strlen(input)==0)
+						if(strlen(input)==0) //Si la longitud de la cadena de caracteres es cero:
 						{
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);// Finalizacion de la conexion de aplicacion
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF); //Finaliza la conexion de manera de que
+							//el servidor espere una nueva conexión.
 							estado=S_QUIT;
 						}
 						else
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",PW,input,CRLF); // Password del usuario  PASS password
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",PW,input,CRLF); //Coge la clave, si el usuario y la
+							//clave son correctas, pasa al siguiente estado, si alguno de los dos u ambos no están autorizados,
+							//dice que la autorización es erronea y hay que salir. (Envía la clave con input).
 						break;
 					case S_DATA:
 						printf("CLIENTE> Introduzca datos (enter o QUIT para salir): ");
 						gets(input);
-						if(strlen(input)==0)
+						if(strlen(input)==0) //Si la longitud de la cadena de caracteres es cero:
 						{
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);// Finalizacion de la conexion de aplicacion
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF); //Finaliza la conexion de manera de que
+							//el servidor espere una nueva conexión.
 							estado=S_QUIT;
 						}
 						else
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",input,CRLF);
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",input,CRLF); //Envía los datos con input.
 						break;
 				 
 				
@@ -170,7 +177,7 @@ int main(int *argc, char *argv[])
 			{
 				printf("CLIENTE> ERROR AL CONECTAR CON %s:%d\r\n",ipdest,TCP_SERVICE_PORT);
 			}		
-			// fin de la conexion de transporte
+			//Fin de la conexion de transporte
 			closesocket(sockfd);  //Close- cierra socket
 			
 		}	
