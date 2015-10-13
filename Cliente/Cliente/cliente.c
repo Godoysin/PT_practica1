@@ -139,28 +139,45 @@ int main(int *argc, char *argv[])
 					}
 					//Envio
 					if(estado!=S_HELO)
-					// Ejercicio: Comprobar el estado de envio
+					{
+						//Ejercicio: Comprobar el estado de envio
 						enviados=send(sockfd,buffer_out,(int)strlen(buffer_out),0); //Send- envía un mensaje
+						if(enviados<=0)
+						{
+							if(enviados<0)
+							{
+								printf("CLIENTE> Error en la recepcion de datos\r\n");
+								estado=S_QUIT;
+							}
+							else
+							{
+							printf("CLIENTE> Conexion con el servidor cerrada\r\n");
+							estado=S_QUIT;
+							}
+					}
+					}
+					
+						
 
 					//Recibo
 					recibidos=recv(sockfd,buffer_in,512,0); //Recv- Recibir un mensaje
-
 					if(recibidos<=0)
 					{
 						DWORD error=GetLastError();
 						if(recibidos<0)
 						{
-							printf("CLIENTE> Error %d en la recepción de datos\r\n",error);
+							printf("CLIENTE> Error %d en la recepcion de datos\r\n",error);
 							estado=S_QUIT;
 						}
 						else
 						{
-							printf("CLIENTE> Conexión con el servidor cerrada\r\n");
+							printf("CLIENTE> Conexion con el servidor cerrada\r\n");
 							estado=S_QUIT;
 						
 					
 						}
-					}else
+					}
+					else
 					{
 						buffer_in[recibidos]=0x00;
 						printf(buffer_in);

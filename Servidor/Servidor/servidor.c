@@ -62,8 +62,8 @@ main()
 													// Cambiar para que conincida con la del host
 	}
 	
-	// Enlace el socket a la direccion local (IP y puerto)
-	if(bind(sockfd,(struct sockaddr*)&local_addr,sizeof(local_addr))<0) //Bind-Asocia una dirección local con un socket
+	//Enlace el socket a la direccion local (IP y puerto)
+	if(bind(sockfd,(struct sockaddr*)&local_addr,sizeof(local_addr))<0) //Bind- Asocia una dirección local con un socket
 		return(-4);
 	
 	//Se prepara el socket para recibir conexiones y se establece el tamaño de cola de espera
@@ -91,21 +91,56 @@ main()
 		sprintf_s (buffer_out, sizeof(buffer_out), "%s Bienvenindo al servidor de ECO%s",OK,CRLF);
 		
 		enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0); //Send- envía un mensaje
-		//TODO Comprobar error de envío
- 
-		//Se reestablece el estado inicial
-		estado = S_USER;
-		fin_conexion = 0;
+		//DONE Comprobar error de envío
+		if(enviados<=0)
+		{
+			if(enviados<0) //Caso que la operación haya fallado =-1
+			{
+				fin_conexion = 1;
+				printf ("SERVIDOR> Se ha producido un error en el envío de datos\r\n");
+			}
+			else //Caso que la operación se haya cerrado =0
+			{
+				fin_conexion = 1;
+				printf ("SERVIDOR> Se ha cerrado la conexion de aplicacion\r\n");
+			}
+		}
+		else //Si no hay errores en el envío de datos, paso al estado correspondiente.
+		{
+			//Se reestablece el estado inicial
+			estado = S_USER;
+			fin_conexion = 0;
+		}
+		
 
 		printf ("SERVIDOR> Esperando conexion de aplicacion\r\n");
 		do
 		{
 			//Se espera un comando del cliente
 			recibidos = recv(nuevosockfd,buffer_in,1023,0); //Recv- Recibir un mensaje
-			//TODO Comprobar posible error de recepción
+			//DONE Comprobar posible error de recepción
+			if(recibidos<=0)
+			{
+				if(recibidos<0) //Caso de error
+				{
+					printf ("SERVIDOR> Se ha producido un error en la recepicon de datos\r\n");
+					fin_conexion = 1;
+					estado = S_QUIT;
+				}
+				else //Caso de cerrar conexion
+				{
+					printf ("SERVIDOR> Se ha cerrado la conexion de aplicacion\r\n");
+					fin_conexion = 1;
+					estado = S_QUIT;
+				}
+			}
 			
-			buffer_in[recibidos] = 0x00;
-			printf ("SERVIDOR [bytes recibidos]> %d\r\nSERVIDOR [datos recibidos]>%s", recibidos, buffer_in);
+			//Sin esta sentencia, en el caso de que recibidos sea negativo, se produce un error y se cuelga el servidor.
+			if(recibidos>=0)
+			{
+				buffer_in[recibidos] = 0x00;
+				printf ("SERVIDOR [bytes recibidos]> %d\r\nSERVIDOR [datos recibidos]>%s", recibidos, buffer_in);
+			}
 			
 			switch (estado)
 			{
@@ -199,7 +234,20 @@ main()
 			} // switch
 
 			enviados=send(nuevosockfd,buffer_out,(int)strlen(buffer_out),0); //Send- Enviar un mensaje
-			//TODO 
+			//DONE
+			if(enviados<=0)
+			{
+				if(enviados<0) //Caso de error
+				{
+					printf("SERVIDOR> Hay un error en el envío de datos");
+					fin_conexion=1;
+				}
+				else //Caso de fin de conexion
+				{
+					printf("SERVIDOR> Se ha cerrado la conexion");
+					fin_conexion=1;
+				}
+			}
 
 
 		} while (!fin_conexion);
