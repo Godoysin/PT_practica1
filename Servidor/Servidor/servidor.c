@@ -210,6 +210,12 @@ main()
 					strncpy_s(cmd,sizeof(cmd), buffer_in, 4);
 
 					printf ("SERVIDOR [Comando]>%s\r\n",cmd);
+
+					//Operacion de suma
+					if(strcmp(cmd,SUM)==0)
+					{
+						printf("se lo ha tragado");
+					}
 					
 					if ( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicacion
 					{
