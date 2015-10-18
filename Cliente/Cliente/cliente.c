@@ -122,8 +122,11 @@ int main(int *argc, char *argv[])
 							//clave son correctas, pasa al siguiente estado, si alguno de los dos u ambos no están autorizados,
 							//dice que la autorización es erronea y hay que salir. (Envía la clave con input).
 						break;
+
 					case S_DATA:
-						printf("CLIENTE> Introduzca datos (enter o QUIT para salir): ");
+						printf("CLIENTE> Introduzca datos (enter o QUIT para salir): \r\n");
+						printf("CLIENTE> El formato de la suma es: SUM (espacio) numero1 (espacio) numero2\r\n");
+						printf("CLIENTE> Los numeros deben ser de 4 cifras maximo\r\n");
 						gets(input);
 						//He introducido la comparación de lo que se introduce con "QUIT" ya que en el codigo original
 						//si escribias "QUIT" como se indicaba, no pasaba nada.
@@ -131,12 +134,15 @@ int main(int *argc, char *argv[])
 						{
 							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF); //Finaliza la conexion de manera de que
 							//el servidor espere una nueva conexión.
-							estado=S_QUIT;
+							estado = S_QUIT;
 						}
-						else
+						//Aquí es donde se envía
+						else{
 							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",input,CRLF); //Envía los datos con input.
+							printf("%s%s",input,CRLF);
+							
+						}
 						break;
-				 
 				
 					}
 					//Envio

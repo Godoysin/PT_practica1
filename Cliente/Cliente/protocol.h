@@ -32,4 +32,4 @@
 #define PASSWORD	"123456"
 
 // COMANDOS
-#define SUM			"suma"
+#define SUM			"SUM"

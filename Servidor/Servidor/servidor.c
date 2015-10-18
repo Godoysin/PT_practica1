@@ -30,7 +30,9 @@ main()
 	WSADATA wsaData;
 	SOCKET sockfd,nuevosockfd;
 	struct sockaddr_in  local_addr,remote_addr;
-	char buffer_out[1024],buffer_in[1024], cmd[10], usr[10], pas[10];
+	char buffer_out[1024],buffer_in[1024], cmd[10], usr[10], pas[10], sum[1024];
+	//NO SE QUE HAGO CON MI VIDA
+	char *cut, a[4],b[4],c[4];
 	int err,tamanio;
 	int fin=0, fin_conexion=0;
 	int recibidos=0,enviados=0;
@@ -164,7 +166,7 @@ main()
 							printf ("SERVIDOR> Esperando clave\r\n");
 						}
 						else{
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s Autenticación errónea%s", ER,CRLF);
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s Autenticacion erronea%s", ER,CRLF);
 
 							estado = S_USER;
 							printf ("SERVIDOR> Esperando usuario\r\n");
@@ -173,7 +175,7 @@ main()
 					else
 					if( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicación.
 					{
-						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
+						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexion%s", OK,CRLF);
 						fin_conexion=1;
 					}
 					else
@@ -190,7 +192,7 @@ main()
 
 					if ( strcmp(cmd,PW)==0 ) //Si el comando recibido es password:
 					{
-						sscanf_s (buffer_in,"PASS %s\r\n",pas,sizeof(usr));
+						sscanf_s (buffer_in,"PASS %s\r\n",pas,sizeof(pas));
 
 						if ( (strcmp(usr,USER)==0) && (strcmp(pas,PASSWORD)==0) ) //Si el usuario y la clave recibidos son correctos
 						{
@@ -207,7 +209,7 @@ main()
 					} else
 					if ( strcmp(cmd,SD)==0 ) //Finalización de la conexión de aplicación.
 					{
-						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
+						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexion%s", OK,CRLF);
 						fin_conexion=1;
 					}
 					else
@@ -219,20 +221,42 @@ main()
 				case S_DATA: /***********************************************************/
 					
 					buffer_in[recibidos] = 0x00;
+					sum[0]=0x00;
 					
-					strncpy_s(cmd,sizeof(cmd), buffer_in, 4);
+					strncpy_s(cmd,sizeof(cmd), buffer_in, 3);
+					strncpy_s(sum,sizeof(sum), buffer_in, 13);
 
 					printf ("SERVIDOR [Comando]>%s\r\n",cmd);
 
-					//Operacion de suma
+					//Operacion de SUMA
 					if(strcmp(cmd,SUM)==0)
 					{
-						printf("se lo ha tragado");
+						printf("SERVIDOR> Esperando numeros\r\n");
+						printf("%s\r\n",sum);
+
+						//¿?
+						strcpy(a, sum);
+						cut = strchr(a, ' ');
+						if(cut != NULL) *cut = '\0';
+						printf("%s siii \r\n",a);
+						printf("%s nooo \r\n",cut);
+
+						cut = strchr(sum, ' ');
+						if(cut != NULL){
+						strcpy(b, ++cut);
+						//Si pongo 4 peta
+						b[3] = '\0';  
+						}
+						printf("%s siii \r\n",b);
+						printf("%s nooo \r\n",cut);
+						//
+
+						sscanf_s (buffer_in,"algo %s\r\n",sum,sizeof(sum));
 					}
 					
-					if ( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicacion
+					else if ( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicacion
 					{
-						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
+						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexion%s", OK,CRLF);
 						fin_conexion=1;
 					}
 					else if (strcmp(cmd,SD2)==0) //Finalizacion de la conexion de aplicacion y finaliza servidor
@@ -258,12 +282,12 @@ main()
 			{
 				if(enviados<0) //Caso de error
 				{
-					printf("SERVIDOR> Hay un error en el envío de datos");
+					printf("SERVIDOR> Hay un error en el envío de datos\r\n");
 					fin_conexion=1;
 				}
 				else //Caso de fin de conexion
 				{
-					printf("SERVIDOR> Se ha cerrado la conexion");
+					printf("SERVIDOR> Se ha cerrado la conexion\r\n");
 					fin_conexion=1;
 				}
 			}
