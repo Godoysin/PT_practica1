@@ -125,7 +125,9 @@ int main(int *argc, char *argv[])
 					case S_DATA:
 						printf("CLIENTE> Introduzca datos (enter o QUIT para salir): ");
 						gets(input);
-						if(strlen(input)==0) //Si la longitud de la cadena de caracteres es cero:
+						//He introducido la comparación de lo que se introduce con "QUIT" ya que en el codigo original
+						//si escribias "QUIT" como se indicaba, no pasaba nada.
+						if(strlen(input)==0||strcmp(input,SD)==0) //Si la longitud de la cadena de caracteres es cero:
 						{
 							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF); //Finaliza la conexion de manera de que
 							//el servidor espere una nueva conexión.
