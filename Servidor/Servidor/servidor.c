@@ -152,13 +152,26 @@ main()
 					{
 						sscanf_s (buffer_in,"USER %s\r\n",usr,sizeof(usr));
 						
+						//No tiene sentido que te permita introducir un usuario incorrecto
+						//y que no lo puedas modificar sin tener que reestablecer la conexión.
 						// envia OK acepta todos los usuarios hasta que tenga la clave
-						sprintf_s (buffer_out, sizeof(buffer_out), "%s%s", OK,CRLF);
+
+						//Si el usuario es correcto, pasa a pedir la clave
+						if(strcmp(usr,USER)==0){
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s", OK,CRLF);
 						
-						estado = S_PASS;
-						printf ("SERVIDOR> Esperando clave\r\n");
-					} else
-					if ( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicación.
+							estado = S_PASS;
+							printf ("SERVIDOR> Esperando clave\r\n");
+						}
+						else{
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s Autenticación errónea%s", ER,CRLF);
+
+							estado = S_USER;
+							printf ("SERVIDOR> Esperando usuario\r\n");
+						}
+					} 
+					else
+					if( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicación.
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Fin de la conexión%s", OK,CRLF);
 						fin_conexion=1;
