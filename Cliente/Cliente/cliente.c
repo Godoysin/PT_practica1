@@ -139,8 +139,6 @@ int main(int *argc, char *argv[])
 						//Aquí es donde se envía
 						else{
 							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",input,CRLF); //Envía los datos con input.
-							printf("%s%s",input,CRLF);
-							
 						}
 						break;
 				

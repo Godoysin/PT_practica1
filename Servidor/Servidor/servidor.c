@@ -31,8 +31,8 @@ main()
 	SOCKET sockfd,nuevosockfd;
 	struct sockaddr_in  local_addr,remote_addr;
 	char buffer_out[1024],buffer_in[1024], cmd[10], usr[10], pas[10], sum[1024];
-	//NO SE QUE HAGO CON MI VIDA
-	char *cut, a[4],b[4],c[4];
+	char a[5];
+	int i, j;
 	int err,tamanio;
 	int fin=0, fin_conexion=0;
 	int recibidos=0,enviados=0;
@@ -232,26 +232,8 @@ main()
 					if(strcmp(cmd,SUM)==0)
 					{
 						printf("SERVIDOR> Esperando numeros\r\n");
-						printf("%s\r\n",sum);
-
-						//¿?
-						strcpy(a, sum);
-						cut = strchr(a, ' ');
-						if(cut != NULL) *cut = '\0';
-						printf("%s siii \r\n",a);
-						printf("%s nooo \r\n",cut);
-
-						cut = strchr(sum, ' ');
-						if(cut != NULL){
-						strcpy(b, ++cut);
-						//Si pongo 4 peta
-						b[3] = '\0';  
-						}
-						printf("%s siii \r\n",b);
-						printf("%s nooo \r\n",cut);
-						//
-
-						sscanf_s (buffer_in,"algo %s\r\n",sum,sizeof(sum));
+						sscanf(sum, "%4s%d%d", &a, &i, &j);
+						sprintf_s (buffer_out, sizeof(buffer_out), "%s Suma = %d %s",OK,i+j,CRLF);
 					}
 					
 					else if ( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicacion
