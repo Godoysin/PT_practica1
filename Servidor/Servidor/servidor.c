@@ -30,9 +30,9 @@ main()
 	WSADATA wsaData;
 	SOCKET sockfd,nuevosockfd;
 	struct sockaddr_in  local_addr,remote_addr;
-	char buffer_out[1024],buffer_in[1024], cmd[10], usr[10], pas[10], sum[1024];
+	char buffer_out[1024],buffer_in[1024], cmd[10], usr[10], pas[10], sum[2048];
 	char a[5];
-	int i, j;
+	int i, j, flag;
 	int err,tamanio;
 	int fin=0, fin_conexion=0;
 	int recibidos=0,enviados=0;
@@ -224,16 +224,38 @@ main()
 					sum[0]=0x00;
 					
 					strncpy_s(cmd,sizeof(cmd), buffer_in, 3);
-					strncpy_s(sum,sizeof(sum), buffer_in, 13);
+					strncpy_s(sum,sizeof(sum), buffer_in, 19);
 
 					printf ("SERVIDOR [Comando]>%s\r\n",cmd);
 
 					//Operacion de SUMA
 					if(strcmp(cmd,SUM)==0)
 					{
+						flag = 0;
 						printf("SERVIDOR> Esperando numeros\r\n");
 						sscanf(sum, "%4s%d%d", &a, &i, &j);
-						sprintf_s (buffer_out, sizeof(buffer_out), "%s Suma = %d %s",OK,i+j,CRLF);
+						printf("%d\r\n",j);
+						if(strcmp(a,SUM)==0){
+							if(i<=(-10000)){
+								sprintf_s (buffer_out, sizeof(buffer_out), "%s Primer numero demasiado corto: %d %s",ER,i,CRLF);
+								flag = 1;
+							}
+							if(i>=10000){
+								sprintf_s (buffer_out, sizeof(buffer_out), "%s Primer numero demasiado largo: %d %s",ER,i,CRLF);
+								flag = 1;
+							}
+							if(j<=(-10000)){
+								sprintf_s (buffer_out, sizeof(buffer_out), "%s Segundo numero demasiado corto: %d %s",ER,j,CRLF);
+								flag = 1;
+							}
+							if(j>=10000){
+								sprintf_s (buffer_out, sizeof(buffer_out), "%s Segundo numero demasiado largo: %d %s",ER,j,CRLF);
+								flag = 1;
+							}
+							if(flag==0){
+								sprintf_s (buffer_out, sizeof(buffer_out), "%s Suma = %d %s",OK,i+j,CRLF);
+							}
+						}
 					}
 					
 					else if ( strcmp(cmd,SD)==0 ) //Finalizacion de la conexion de aplicacion

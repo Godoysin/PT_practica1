@@ -21,9 +21,6 @@ Autor: Juan Carlos Cuevas Martínez
 #include "protocol.h"
 
 
-
-
-
 int main(int *argc, char *argv[])
 {
 	SOCKET sockfd;
@@ -126,7 +123,7 @@ int main(int *argc, char *argv[])
 					case S_DATA:
 						printf("CLIENTE> Introduzca datos (enter o QUIT para salir): \r\n");
 						printf("CLIENTE> El formato de la suma es: SUM (espacio) numero1 (espacio) numero2\r\n");
-						printf("CLIENTE> Los numeros deben ser de 4 cifras maximo\r\n");
+						printf("CLIENTE> Los numeros deben ser enteros de 4 cifras maximo\r\n");
 						gets(input);
 						//He introducido la comparación de lo que se introduce con "QUIT" ya que en el codigo original
 						//si escribias "QUIT" como se indicaba, no pasaba nada.
