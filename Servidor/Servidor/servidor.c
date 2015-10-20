@@ -223,8 +223,9 @@ main()
 					buffer_in[recibidos] = 0x00;
 					sum[0]=0x00;
 					
-					strncpy_s(cmd,sizeof(cmd), buffer_in, 3);
+					strncpy_s(cmd,sizeof(cmd), buffer_in, 4);
 					strncpy_s(sum,sizeof(sum), buffer_in, 19);
+					cmd[4]=0;
 
 					printf ("SERVIDOR [Comando]>%s\r\n",cmd);
 
@@ -233,9 +234,8 @@ main()
 					{
 						flag = 0;
 						printf("SERVIDOR> Esperando numeros\r\n");
-						sscanf(sum, "%4s%d%d", &a, &i, &j);
-						printf("%d\r\n",j);
-						if(strcmp(a,SUM)==0){
+						sscanf(sum, "SUM %d %d", &i, &j);
+						if(strcmp(cmd,SUM)==0){
 							if(i<=(-10000)){
 								sprintf_s (buffer_out, sizeof(buffer_out), "%s Primer numero demasiado corto: %d %s",ER,i,CRLF);
 								flag = 1;
@@ -270,6 +270,7 @@ main()
 						fin=1;
 					}
 					else
+					//if(strcmp(a,SUM)!=0&&strcmp(cmd,SD)!=0&&strcmp(cmd,SD2)!=0)
 					{
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s Comando incorrecto%s",ER,CRLF);
 					}
